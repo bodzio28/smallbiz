@@ -47,6 +47,6 @@ Aplikacja uruchamia się pod adresem `http://localhost:5268`. Polecenie `dotnet 
 
 Szczegółowa instrukcja i rozwiązania typowych problemów: [dokumentacja, rozdział 6](docs/dokumentacja.md#6-instalacja-i-uruchomienie).
 
-## Autor
+## Autorzy
 
-Bogdan Emodi, Piotr Czarnocki, Karol Jurewicz — projekt na przedmiot Dynamiczna analiza oprogramowania.
+Bogdan Emodi, Piotr Czarnocki, Karol Jurewicz — projekt na przedmiot Dynamiczna Analiza Oprogramowania.

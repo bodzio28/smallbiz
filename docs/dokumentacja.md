@@ -277,7 +277,7 @@ Tabela `Contractors` (encja `Contractor`, migracja `AddContractors`):
 | `Email` | `nvarchar(150)` | nie | Adres e-mail |
 | `IsCustomer` | `bit` | tak | Odbiorca (klient); w aplikacji domyślnie tak |
 | `IsSupplier` | `bit` | tak | Dostawca |
-| `isActive` | `bit` | tak | Kontrahent aktywny; w aplikacji domyślnie tak |
+| `IsActive` | `bit` | tak | Kontrahent aktywny; w aplikacji domyślnie tak |
 
 Wartości domyślne ustawia kod C# w chwili tworzenia obiektu — kolumny w bazie nie mają wartości domyślnych, dlatego przy ręcznym wprowadzaniu danych (np. w SQL Server Management Studio) trzeba je podać.
 
@@ -410,8 +410,6 @@ W SQL Server Management Studio należy połączyć się z serwerem `(localdb)\MS
 - Brak ekranów obsługi kontrahentów (lista, formularz) — kolejny krok prac.
 - W aplikacji pozostały strony przykładowe szablonu (*Counter*, *Weather*, *Auth*) oraz angielskie teksty interfejsu.
 - Strony aplikacji nie wymagają zalogowania (poza testową stroną `/auth`).
-- Nazwa właściwości `isActive` jest niezgodna z konwencją nazewnictwa C# (PascalCase) — do zmiany na `IsActive`.
-- Brak unikalnego indeksu na kolumnie `Code` — możliwe jest dodanie dwóch kontrahentów o tym samym kodzie.
 - Brak walidacji numeru NIP.
 - Aplikacja nie wysyła wiadomości e-mail — konto potwierdza się linkiem wyświetlanym na stronie.
 

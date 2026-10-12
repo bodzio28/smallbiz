@@ -38,6 +38,6 @@ public class Contractor
 
     public bool IsCustomer { get; set; } = true;
     public bool IsSupplier { get; set; }
-    public bool isActive { get; set; } = true;
+    public bool IsActive { get; set; } = true;
 
 }
