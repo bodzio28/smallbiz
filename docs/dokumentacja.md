@@ -234,6 +234,7 @@ Wraz z rozbudową systemu planowane jest wydzielenie warstwy logiki biznesowej (
 |---|---|
 | `00000000000000_CreateIdentitySchema` | Tabele ASP.NET Core Identity (z szablonu projektu) |
 | `20261011180539_AddContractors` | Tabela `Contractors` |
+| `20261012181305_ContractorFixes` | Zmiana nazwy kolumny, unikalny indeks na `Code`|
 
 ### 4.5. Uwierzytelnianie i bezpieczeństwo
 
@@ -261,12 +262,12 @@ Tabele ASP.NET Core Identity (utworzone migracją z szablonu):
 | `AspNetUserPasskeys` | Klucze dostępu (passkeys) |
 | `__EFMigrationsHistory` | Lista zastosowanych migracji |
 
-Tabela `Contractors` (encja `Contractor`, migracja `AddContractors`):
+Tabela `Contractors` (encja `Contractor`, migracje `AddContractors` i `ContractorFixes`):
 
 | Kolumna | Typ SQL | Wymagana | Opis |
 |---|---|---|---|
 | `Id` | `int`, IDENTITY | tak | Klucz główny, nadawany automatycznie |
-| `Code` | `nvarchar(40)` | tak | Kod (skrót) kontrahenta |
+| `Code` | `nvarchar(40)` | tak | Kod (skrót) kontrahenta, ma unikalny indeks|
 | `TaxId` | `nvarchar(20)` | nie | NIP |
 | `Name` | `nvarchar(200)` | tak | Pełna nazwa |
 | `Country` | `nvarchar(100)` | tak | Kraj; w aplikacji domyślnie „Polska” |
