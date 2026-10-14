@@ -1,5 +1,56 @@
-﻿<h3>ContractorList</h3>
+﻿@page "/kontrahenci"
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.EntityFrameworkCore
+@using Smallbiz.Domain.Entities
+@using Smallbiz.Web.Data
+@attribute [Authorize]
+@inject IDbContextFactory<ApplicationDbContext> DbFactory
+
+<PageTitle>Kontrahenci</PageTitle>
+<h1>Kontrahenci</h1>
+
+@if (contractors is null)
+{
+    <p>Ładowanie…</p>
+}
+else if (contractors.Count == 0)
+{
+    <p>Brak kontrahentów.</p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Kod</th>
+                <th>Nazwa</th>
+                <th>NIP</th>
+                <th>Miasto</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var c in contractors)
+            {
+                <tr>
+                    <td>@c.Code</td>
+                    <td>@c.Name</td>
+                    <td>@(c.TaxId ?? "-")</td>
+                    <td>@c.City</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
 
 @code {
+    private List<Contractor>? contractors;
 
+    protected override async Task OnInitializedAsync()
+    {
+        await using var db = await DbFactory.CreateDbContextAsync();
+        contractors = await db.Contractors
+            .AsNoTracking()
+            .OrderBy(c => c.Name)
+            .ToListAsync();
+    }
 }
