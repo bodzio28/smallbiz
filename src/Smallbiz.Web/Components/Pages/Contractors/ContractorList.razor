@@ -9,6 +9,8 @@
 <PageTitle>Kontrahenci</PageTitle>
 <h1>Kontrahenci</h1>
 
+<a href="kontrahenci/nowy" class="btn btn-primary mb-3">Dodaj kontrahenta</a>
+
 @if (contractors is null)
 {
     <p>Ładowanie…</p>
@@ -26,6 +28,7 @@ else
                 <th>Nazwa</th>
                 <th>NIP</th>
                 <th>Miasto</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -36,6 +39,7 @@ else
                     <td>@c.Name</td>
                     <td>@(c.TaxId ?? "-")</td>
                     <td>@c.City</td>
+                    <td><a href="kontrahenci/@c.Id">Edytuj</a></td>
                 </tr>
             }
         </tbody>

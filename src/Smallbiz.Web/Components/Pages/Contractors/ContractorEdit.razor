@@ -1,0 +1,143 @@
+﻿@page "/kontrahenci/nowy"
+@page "/kontrahenci/{Id:int}"
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.EntityFrameworkCore
+@using Smallbiz.Domain.Entities
+@using Smallbiz.Web.Data
+@attribute [Authorize]
+@inject IDbContextFactory<ApplicationDbContext> DbFactory
+@inject NavigationManager Navigation
+
+<PageTitle>@(Id is null ? "Nowy kontrahent" : "Edycja kontrahenta")</PageTitle>
+<h1>@(Id is null ? "Nowy kontrahent" : "Edycja kontrahenta")</h1>
+
+@if (contractor is null)
+{
+    <p>Ładowanie…</p>
+}
+else
+{
+    <EditForm Model="contractor" OnValidSubmit="SaveAsync">
+        <DataAnnotationsValidator />
+
+        <div class="mb-3">
+            <label class="form-label">Kod</label>
+            <InputText @bind-Value="contractor.Code" class="form-control" />
+            <ValidationMessage For="() => contractor.Code" class="text-danger" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Nazwa</label>
+            <InputText @bind-Value="contractor.Name" class="form-control" />
+            <ValidationMessage For="() => contractor.Name" class="text-danger" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">NIP</label>
+            <InputText @bind-Value="contractor.TaxId" class="form-control" />
+            <ValidationMessage For="() => contractor.TaxId" class="text-danger" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Ulica</label>
+            <InputText @bind-Value="contractor.Street" class="form-control" />
+            <ValidationMessage For="() => contractor.Street" class="text-danger" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Kod pocztowy</label>
+            <InputText @bind-Value="contractor.PostalCode" class="form-control" />
+            <ValidationMessage For="() => contractor.PostalCode" class="text-danger" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Miejscowość</label>
+            <InputText @bind-Value="contractor.City" class="form-control" />
+            <ValidationMessage For="() => contractor.City" class="text-danger" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Kraj</label>
+            <InputText @bind-Value="contractor.Country" class="form-control" />
+            <ValidationMessage For="() => contractor.Country" class="text-danger" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Telefon</label>
+            <InputText @bind-Value="contractor.Phone" class="form-control" />
+            <ValidationMessage For="() => contractor.Phone" class="text-danger" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">E-mail</label>
+            <InputText @bind-Value="contractor.Email" class="form-control" />
+            <ValidationMessage For="() => contractor.Email" class="text-danger" />
+        </div>
+
+        <div class="form-check mb-3">
+            <InputCheckbox @bind-Value="contractor.IsCustomer" class="form-check-input" id="isCustomer" />
+            <label class="form-check-label" for="isCustomer">Odbiorca</label>
+        </div>
+
+        <div class="form-check mb-3">
+            <InputCheckbox @bind-Value="contractor.IsSupplier" class="form-check-input" id="isSupplier" />
+            <label class="form-check-label" for="isSupplier">Dostawca</label>
+        </div>
+
+        <div class="form-check mb-3">
+            <InputCheckbox @bind-Value="contractor.IsActive" class="form-check-input" id="isActive" />
+            <label class="form-check-label" for="isActive">Aktywny</label>
+        </div>
+
+        @if (errorMessage is not null)
+        {
+            <div class="alert alert-danger">@errorMessage</div>
+        }
+
+        <button type="submit" class="btn btn-primary">Zapisz</button>
+        <a href="kontrahenci" class="btn btn-secondary">Anuluj</a>
+    </EditForm>
+}
+
+@code {
+    [Parameter] public int? Id { get; set; }
+
+    private Contractor? contractor;
+    private string? errorMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (Id is null)
+        {
+            contractor = new Contractor();
+        }
+        else
+        {
+            await using var db = await DbFactory.CreateDbContextAsync();
+            contractor = await db.Contractors.FindAsync(Id.Value);
+            if (contractor is null)
+                Navigation.NavigateTo("kontrahenci");
+        }
+    }
+
+    private async Task SaveAsync()
+    {
+        errorMessage = null;
+        await using var db = await DbFactory.CreateDbContextAsync();
+
+        if (Id is null)
+            db.Contractors.Add(contractor!);
+        else
+            db.Contractors.Update(contractor!);
+
+        try
+        {
+            await db.SaveChangesAsync();
+            Navigation.NavigateTo("kontrahenci");
+        }
+        catch (DbUpdateException)
+        {
+            errorMessage = "Nie udało się zapisać. Sprawdź, czy kod kontrahenta nie jest już zajęty.";
+        }
+    }
+}
