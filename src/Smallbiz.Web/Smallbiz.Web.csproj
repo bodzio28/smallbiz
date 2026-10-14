@@ -20,4 +20,8 @@
     <ProjectReference Include="..\Smallbiz.Domain\Smallbiz.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Components\Pages\Contractors\ContractorEdit.razor\" />
+  </ItemGroup>
+
 </Project>
