@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.ComponentModel.DataAnnotations;
+using Smallbiz.Domain.Validation;
 
 namespace Smallbiz.Domain.Entities;
 
@@ -12,7 +13,7 @@ public class Contractor
     [Required, MaxLength(40)]
     public string Code { get; set; } = "";
 
-    [MaxLength(20)]
+    [MaxLength(20),Nip]
     public string? TaxId { get; set; }
 
     [Required, MaxLength(200)]
