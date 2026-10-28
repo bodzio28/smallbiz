@@ -10,31 +10,31 @@ public class Contractor
 {
     public int Id { get; set; }
 
-    [Required, MaxLength(40)]
+    [Required(ErrorMessage = "Podaj kod kontrahenta."), MaxLength(40, ErrorMessage = "Kod może mieć najwyżej 40 znaków.")]
     public string Code { get; set; } = "";
 
-    [MaxLength(20),Nip]
+    [MaxLength(20, ErrorMessage = "NIP może mieć najwyżej 20 znaków."), Nip]
     public string? TaxId { get; set; }
 
-    [Required, MaxLength(200)]
+    [Required(ErrorMessage = "Podaj nazwę kontrahenta."), MaxLength(200, ErrorMessage = "Nazwa może mieć najwyżej 200 znaków.")]
     public string Name { get; set; } = "";
 
-    [Required, MaxLength(100)]
+    [Required(ErrorMessage = "Podaj państwo kontrahenta."), MaxLength(100, ErrorMessage = "Państwo może mieć najwyżej 100 znaków.")]
     public string Country { get; set; } = "Polska";
 
-    [Required, MaxLength(100)]
+    [Required(ErrorMessage = "Podaj miasto kontrahenta."), MaxLength(100, ErrorMessage = "Miasto może mieć najwyżej 100 znaków.")]
     public string City { get; set; } = "";
 
-    [Required, MaxLength(200)]
+    [Required(ErrorMessage = "Podaj adres kontrahenta."), MaxLength(200, ErrorMessage = "Adres może mieć najwyżej 200 znaków.")]
     public string Street { get; set; } = "";
 
-    [Required, MaxLength(20)]
+    [Required(ErrorMessage = "Podaj kod pocztowy kontrahenta."), MaxLength(20, ErrorMessage = "Kod pocztowy może mieć najwyżej 20 znaków.")]
     public string PostalCode { get; set; } = "";
 
-    [MaxLength(30)]
+    [MaxLength(30, ErrorMessage = "Numer telefonu może mieć najwyżej 30 znaków.")]
     public string? Phone { get; set; }
 
-    [MaxLength(150)]
+    [MaxLength(150, ErrorMessage = "Email może mieć najwyżej 150 znaków.")]
     public string? Email { get; set; }
 
     public bool IsCustomer { get; set; } = true;
