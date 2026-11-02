@@ -19,6 +19,12 @@ namespace Smallbiz.Tests
         [DataRow("1234563218")]
         [DataRow("123-456-32-18")]
         [DataRow("5846127309")]
+        [DataRow("123 456 32 18")]
+        [DataRow("7793014620")]
+        [DataRow("8971543061")]
+        [DataRow("7312049586")]
+        [DataRow("7256091830")]
+        [DataRow("9876543210")]
         public void IsValid_PoprawnyNip_ZwracaTrue(string nip)
         {
             Assert.IsTrue(NipValidator.IsValid(nip));
@@ -29,6 +35,7 @@ namespace Smallbiz.Tests
         [DataRow("123456321")]
         [DataRow("12345632181")]
         [DataRow("A234563215")]
+        [DataRow("1234563260")]
         [DataRow("")]
         [DataRow("    ")]
         [DataRow("\uFF11234563216")]

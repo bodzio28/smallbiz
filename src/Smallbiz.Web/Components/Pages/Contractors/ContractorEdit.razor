@@ -124,7 +124,7 @@ else
     {
         errorMessage = null;
         await using var db = await DbFactory.CreateDbContextAsync();
-
+        if (string.IsNullOrWhiteSpace(contractor!.TaxId)) contractor.TaxId = null;
         if (Id is null)
             db.Contractors.Add(contractor!);
         else
