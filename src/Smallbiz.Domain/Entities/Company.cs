@@ -23,7 +23,7 @@ namespace Smallbiz.Domain.Entities
         [Required(ErrorMessage = "Podaj państwo firmy."), MaxLength(100, ErrorMessage = "Państwo może mieć najwyżej 100 znaków.")]
         public string Country { get; set; } = "Polska";
 
-        [Required(ErrorMessage = "Podaj miasto fimry."), MaxLength(100, ErrorMessage = "Miasto może mieć najwyżej 100 znaków.")]
+        [Required(ErrorMessage = "Podaj miasto firmy."), MaxLength(100, ErrorMessage = "Miasto może mieć najwyżej 100 znaków.")]
         public string City { get; set; } = "";
 
         [Required(ErrorMessage = "Podaj adres firmy."), MaxLength(200, ErrorMessage = "Adres może mieć najwyżej 200 znaków.")]

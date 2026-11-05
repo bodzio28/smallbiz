@@ -110,7 +110,6 @@ else
     {
         errorMessage = null;
         await using var db = await DbFactory.CreateDbContextAsync();
-        if (string.IsNullOrWhiteSpace(company!.TaxId)) company.TaxId = null;
         if (Id is null)
             db.Companies.Add(company!);
         else
@@ -123,7 +122,7 @@ else
         }
         catch (DbUpdateException)
         {
-            errorMessage = "Nie udało się zapisać. Sprawdź, czy kod firmy nie jest już zajęty.";
+            errorMessage = "Nie udało się zapisać firmy.";
         }
     }
 }

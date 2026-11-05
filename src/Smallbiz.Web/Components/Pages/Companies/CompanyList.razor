@@ -24,7 +24,6 @@ else
     <table class="table table-striped">
         <thead>
             <tr>
-                <th>Kod</th>
                 <th>Nazwa</th>
                 <th>NIP</th>
                 <th>Numer konta</th>
@@ -37,7 +36,7 @@ else
             {
                 <tr>
                     <td>@c.Name</td>
-                    <td>@(c.TaxId ?? "-")</td>
+                    <td>@c.TaxId</td>
                     <td>@c.BankAccount</td>
                     <td>@c.City</td>
                     <td><a href="firmy/@c.Id">Edytuj</a></td>
