@@ -1,0 +1,61 @@
+﻿@page "/firmy"
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.EntityFrameworkCore
+@using Smallbiz.Domain.Entities
+@using Smallbiz.Web.Data
+@attribute [Authorize]
+@inject IDbContextFactory<ApplicationDbContext> DbFactory
+
+<PageTitle>Firmy</PageTitle>
+<h1>Firmy</h1>
+
+<a href="firmy/nowy" class="btn btn-primary mb-3">Nowa Firma</a>
+
+@if (companies is null)
+{
+    <p>Ładowanie…</p>
+}
+else if (companies.Count == 0)
+{
+    <p>Brak firm.</p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Kod</th>
+                <th>Nazwa</th>
+                <th>NIP</th>
+                <th>Numer konta</th>
+                <th>Miasto</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var c in companies)
+            {
+                <tr>
+                    <td>@c.Name</td>
+                    <td>@(c.TaxId ?? "-")</td>
+                    <td>@c.BankAccount</td>
+                    <td>@c.City</td>
+                    <td><a href="firmy/@c.Id">Edytuj</a></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<Company>? companies;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await using var db = await DbFactory.CreateDbContextAsync();
+        companies = await db.Companies
+            .AsNoTracking()
+            .OrderBy(c => c.Name)
+            .ToListAsync();
+    }
+}

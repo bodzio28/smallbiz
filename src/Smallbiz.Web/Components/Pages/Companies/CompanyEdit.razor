@@ -1,0 +1,129 @@
+﻿@page "/firmy/nowy"
+@page "/firmy/{Id:int}"
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.EntityFrameworkCore
+@using Smallbiz.Domain.Entities
+@using Smallbiz.Web.Data
+@attribute [Authorize]
+@inject IDbContextFactory<ApplicationDbContext> DbFactory
+@inject NavigationManager Navigation
+
+<PageTitle>@(Id is null ? "Nowa firma" : "Edycja firmy")</PageTitle>
+<h1>@(Id is null ? "Nowa firma" : "Edycja firmy")</h1>
+
+@if (company is null)
+{
+    <p>Ładowanie…</p>
+}
+else
+{
+    <EditForm Model="company" OnValidSubmit="SaveAsync">
+        <DataAnnotationsValidator />
+
+        <div class="mb-3">
+            <label class="form-label">Nazwa</label>
+            <InputText @bind-Value="company.Name" class="form-control" />
+            <ValidationMessage For="() => company.Name" class="text-danger" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">NIP</label>
+            <InputText @bind-Value="company.TaxId" class="form-control" />
+            <ValidationMessage For="() => company.TaxId" class="text-danger" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Konto bankowe</label>
+            <InputText @bind-Value="company.BankAccount" class="form-control" />
+            <ValidationMessage For="() => company.BankAccount" class="text-danger" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Ulica</label>
+            <InputText @bind-Value="company.Street" class="form-control" />
+            <ValidationMessage For="() => company.Street" class="text-danger" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Kod pocztowy</label>
+            <InputText @bind-Value="company.PostalCode" class="form-control" />
+            <ValidationMessage For="() => company.PostalCode" class="text-danger" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Miejscowość</label>
+            <InputText @bind-Value="company.City" class="form-control" />
+            <ValidationMessage For="() => company.City" class="text-danger" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Kraj</label>
+            <InputText @bind-Value="company.Country" class="form-control" />
+            <ValidationMessage For="() => company.Country" class="text-danger" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Telefon</label>
+            <InputText @bind-Value="company.Phone" class="form-control" />
+            <ValidationMessage For="() => company.Phone" class="text-danger" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">E-mail</label>
+            <InputText @bind-Value="company.Email" class="form-control" />
+            <ValidationMessage For="() => company.Email" class="text-danger" />
+        </div>
+
+
+        @if (errorMessage is not null)
+        {
+            <div class="alert alert-danger">@errorMessage</div>
+        }
+
+        <button type="submit" class="btn btn-primary">Zapisz</button>
+        <a href="firmy" class="btn btn-secondary">Anuluj</a>
+    </EditForm>
+}
+
+@code {
+    [Parameter] public int? Id { get; set; }
+
+    private Company? company;
+    private string? errorMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (Id is null)
+        {
+            company = new Company();
+        }
+        else
+        {
+            await using var db = await DbFactory.CreateDbContextAsync();
+            company = await db.Companies.FindAsync(Id.Value);
+            if (company is null)
+                Navigation.NavigateTo("firmy");
+        }
+    }
+
+    private async Task SaveAsync()
+    {
+        errorMessage = null;
+        await using var db = await DbFactory.CreateDbContextAsync();
+        if (string.IsNullOrWhiteSpace(company!.TaxId)) company.TaxId = null;
+        if (Id is null)
+            db.Companies.Add(company!);
+        else
+            db.Companies.Update(company!);
+
+        try
+        {
+            await db.SaveChangesAsync();
+            Navigation.NavigateTo("firmy");
+        }
+        catch (DbUpdateException)
+        {
+            errorMessage = "Nie udało się zapisać. Sprawdź, czy kod firmy nie jest już zajęty.";
+        }
+    }
+}
