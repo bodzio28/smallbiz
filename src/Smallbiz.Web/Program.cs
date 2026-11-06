@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using Smallbiz.Web.Components;
 using Smallbiz.Web.Components.Account;
 using Smallbiz.Web.Data;
+using Smallbiz.Web.Services;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +16,7 @@ builder.Services.AddRazorComponents()
 builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
+builder.Services.AddScoped<CurrentCompany>();
 
 builder.Services.AddAuthentication(options =>
     {

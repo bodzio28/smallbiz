@@ -4,10 +4,10 @@
 @using Microsoft.EntityFrameworkCore
 @using Smallbiz.Domain.Entities
 @using Smallbiz.Web.Data
-@using System.Security.Claims
 @attribute [Authorize]
 @inject IDbContextFactory<ApplicationDbContext> DbFactory
 @inject NavigationManager Navigation
+@inject CurrentCompany CurrentCompany
 
 <PageTitle>@(Id is null ? "Nowa firma" : "Edycja firmy")</PageTitle>
 <h1>@(Id is null ? "Nowa firma" : "Edycja firmy")</h1>
@@ -92,14 +92,6 @@ else
     private Company? company;
     private string? errorMessage;
 
-    [CascadingParameter] private Task<AuthenticationState>? AuthState { get; set; }
-
-    private async Task<string> GetUserIdAsync()
-    {
-        var auth = await AuthState!;
-        return auth.User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
-    }
-
     protected override async Task OnInitializedAsync()
     {
         if (Id is null)
@@ -108,7 +100,7 @@ else
         }
         else
         {
-            var userId = await GetUserIdAsync();
+            var userId = CurrentCompany.UserId!;
             await using var db = await DbFactory.CreateDbContextAsync();
             bool hasAccess = await db.CompanyUsers.AnyAsync(cu => cu.CompanyId == Id && cu.UserId == userId);
             company = hasAccess ? await db.Companies.FindAsync(Id.Value) : null;
@@ -119,7 +111,7 @@ else
 
     private async Task SaveAsync()
     {
-        var userId = await GetUserIdAsync();
+        var userId = CurrentCompany.UserId!;
         errorMessage = null;
         await using var db = await DbFactory.CreateDbContextAsync();
         if (Id is null)
@@ -133,7 +125,7 @@ else
         try
         {
             await db.SaveChangesAsync();
-            Navigation.NavigateTo("firmy");
+            Navigation.NavigateTo("firmy", forceLoad: true);
         }
         catch (DbUpdateException)
         {

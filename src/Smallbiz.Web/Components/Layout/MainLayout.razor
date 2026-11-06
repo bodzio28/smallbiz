@@ -1,4 +1,5 @@
 ﻿@inherits LayoutComponentBase
+@inject CurrentCompany CurrentCompany
 
 <div class="page">
     <div class="sidebar">
@@ -6,8 +7,22 @@
     </div>
 
     <main>
+        <div class="top-row px-4">
+            @if (CurrentCompany.Name is not null)
+            {
+                <span>Firma: <strong>@CurrentCompany.Name</strong></span>
+            }
+            else if (CurrentCompany.UserId is not null)
+            {
+                <a href="firmy/nowy">Dodaj pierwszą firmę</a>
+            }
+        </div>
+
         <article class="content px-4">
-            @Body
+            @if (loaded)
+            {
+                @Body
+            }
         </article>
     </main>
 </div>
@@ -17,3 +32,13 @@
     <a href="." class="reload">Odśwież stronę</a>
     <span class="dismiss">🗙</span>
 </div>
+@code 
+{
+    private bool loaded;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CurrentCompany.LoadAsync();
+        loaded = true;
+    }
+}
