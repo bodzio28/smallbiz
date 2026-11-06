@@ -4,6 +4,7 @@
 @using Microsoft.EntityFrameworkCore
 @using Smallbiz.Domain.Entities
 @using Smallbiz.Web.Data
+@using System.Security.Claims
 @attribute [Authorize]
 @inject IDbContextFactory<ApplicationDbContext> DbFactory
 @inject NavigationManager Navigation
@@ -91,6 +92,14 @@ else
     private Company? company;
     private string? errorMessage;
 
+    [CascadingParameter] private Task<AuthenticationState>? AuthState { get; set; }
+
+    private async Task<string> GetUserIdAsync()
+    {
+        var auth = await AuthState!;
+        return auth.User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
+    }
+
     protected override async Task OnInitializedAsync()
     {
         if (Id is null)
@@ -99,8 +108,10 @@ else
         }
         else
         {
+            var userId = await GetUserIdAsync();
             await using var db = await DbFactory.CreateDbContextAsync();
-            company = await db.Companies.FindAsync(Id.Value);
+            bool hasAccess = await db.CompanyUsers.AnyAsync(cu => cu.CompanyId == Id && cu.UserId == userId);
+            company = hasAccess ? await db.Companies.FindAsync(Id.Value) : null;
             if (company is null)
                 Navigation.NavigateTo("firmy");
         }
@@ -108,10 +119,14 @@ else
 
     private async Task SaveAsync()
     {
+        var userId = await GetUserIdAsync();
         errorMessage = null;
         await using var db = await DbFactory.CreateDbContextAsync();
         if (Id is null)
+        {
             db.Companies.Add(company!);
+            db.CompanyUsers.Add(new CompanyUser { Company = company!, UserId = userId });
+        }
         else
             db.Companies.Update(company!);
 

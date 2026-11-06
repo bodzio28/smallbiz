@@ -231,6 +231,21 @@ namespace Smallbiz.Web.Migrations
                     b.ToTable("Companies");
                 });
 
+            modelBuilder.Entity("Smallbiz.Domain.Entities.CompanyUser", b =>
+                {
+                    b.Property<int>("CompanyId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("CompanyId", "UserId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("CompanyUsers");
+                });
+
             modelBuilder.Entity("Smallbiz.Domain.Entities.Contractor", b =>
                 {
                     b.Property<int>("Id")
@@ -464,6 +479,23 @@ namespace Smallbiz.Web.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Smallbiz.Domain.Entities.CompanyUser", b =>
+                {
+                    b.HasOne("Smallbiz.Domain.Entities.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Smallbiz.Web.Data.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Company");
                 });
 #pragma warning restore 612, 618
         }

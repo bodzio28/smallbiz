@@ -3,6 +3,7 @@
 @using Microsoft.EntityFrameworkCore
 @using Smallbiz.Domain.Entities
 @using Smallbiz.Web.Data
+@using System.Security.Claims
 @attribute [Authorize]
 @inject IDbContextFactory<ApplicationDbContext> DbFactory
 
@@ -46,15 +47,28 @@ else
     </table>
 }
 
-@code {
+@code 
+{
     private List<Company>? companies;
 
     protected override async Task OnInitializedAsync()
     {
+        var userId = await GetUserIdAsync();
         await using var db = await DbFactory.CreateDbContextAsync();
-        companies = await db.Companies
-            .AsNoTracking()
+        companies = await db.CompanyUsers
+            .Where(cu => cu.UserId == userId)
+            .Select(cu => cu.Company)
             .OrderBy(c => c.Name)
+            .AsNoTracking()
             .ToListAsync();
     }
+
+    [CascadingParameter] private Task<AuthenticationState>? AuthState { get; set; }
+
+    private async Task<string> GetUserIdAsync()
+    {
+        var auth = await AuthState!;
+        return auth.User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
+    }
+
 }
