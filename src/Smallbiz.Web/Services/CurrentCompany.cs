@@ -1,9 +1,8 @@
-﻿using System.Security.Claims;
-using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Smallbiz.Web.Data;
+using System.Security.Claims;
+using Smallbiz.Domain.Entities;
 
 namespace Smallbiz.Web.Services;
 
@@ -13,10 +12,11 @@ public class CurrentCompany(AuthenticationStateProvider authStateProvider, IDbCo
     public string? UserId { get; private set; }
     public int? Id { get; private set; }
     public string? Name { get; private set; }
+    public List<Company> MyCompanies { get; private set; } = [];
 
     public async Task LoadAsync()
     {
-        if(loaded) return;
+        if (loaded) return;
         loaded = true;
 
         var auth = await authStateProvider.GetAuthenticationStateAsync();
@@ -24,13 +24,32 @@ public class CurrentCompany(AuthenticationStateProvider authStateProvider, IDbCo
         if (UserId is null) return;
 
         await using var db = await dbFactory.CreateDbContextAsync();
-        var company = await db.CompanyUsers
+        MyCompanies = await db.CompanyUsers
             .Where(cu => cu.UserId == UserId)
             .Select(cu => cu.Company)
             .OrderBy(c => c.Name)
-            .FirstOrDefaultAsync();
+            .AsNoTracking()
+            .ToListAsync();
 
-        Id = company?.Id;
-        Name = company?.Name;
+        var user = await db.Users.FindAsync(UserId);
+        var current = MyCompanies.FirstOrDefault(c => c.Id == user?.CurrentCompanyId)
+                      ?? MyCompanies.FirstOrDefault();
+
+        Id = current?.Id;
+        Name = current?.Name;
+    }
+
+    public async Task SelectAsync(int companyId)
+    {
+        if (UserId is null) return;
+
+        await using var db = await dbFactory.CreateDbContextAsync();
+        bool hasAccess = await db.CompanyUsers.AnyAsync(cu => cu.CompanyId == companyId && cu.UserId == UserId);
+        if (!hasAccess) return;
+
+        var user = await db.Users.FindAsync(UserId);
+        if (user is null) return;
+        user.CurrentCompanyId = companyId;
+        await db.SaveChangesAsync();
     }
 }

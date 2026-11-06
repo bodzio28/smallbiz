@@ -8,9 +8,10 @@
 
     <main>
         <div class="top-row px-4">
-            @if (CurrentCompany.Name is not null)
+            @if (CurrentCompany.Id is not null)
             {
-                <span>Firma: <strong>@CurrentCompany.Name</strong></span>
+                <span class="me-2">Firma:</span>
+                <CompanySelector />
             }
             else if (CurrentCompany.UserId is not null)
             {

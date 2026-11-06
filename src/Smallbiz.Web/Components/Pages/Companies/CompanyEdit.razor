@@ -125,6 +125,8 @@ else
         try
         {
             await db.SaveChangesAsync();
+            if (Id is null)
+                await CurrentCompany.SelectAsync(company!.Id);
             Navigation.NavigateTo("firmy", forceLoad: true);
         }
         catch (DbUpdateException)

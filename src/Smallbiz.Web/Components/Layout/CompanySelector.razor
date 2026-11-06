@@ -1,0 +1,20 @@
+﻿@inject CurrentCompany CurrentCompany
+@inject NavigationManager Navigation
+
+<select class="form-select form-select-sm w-auto" @onchange="ChangeAsync">
+    @foreach (var c in CurrentCompany.MyCompanies)
+    {
+        <option value="@c.Id" selected="@(c.Id == CurrentCompany.Id)">@c.Name</option>
+    }
+</select>
+
+@code {
+    private async Task ChangeAsync(ChangeEventArgs e)
+    {
+        if (int.TryParse(e.Value?.ToString(), out var companyId))
+        {
+            await CurrentCompany.SelectAsync(companyId);
+            Navigation.NavigateTo(Navigation.Uri, forceLoad: true);
+        }
+    }
+}
