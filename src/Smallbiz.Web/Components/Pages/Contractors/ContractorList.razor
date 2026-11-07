@@ -5,11 +5,19 @@
 @using Smallbiz.Web.Data
 @attribute [Authorize]
 @inject IDbContextFactory<ApplicationDbContext> DbFactory
+@inject CurrentCompany CurrentCompany
 
 <PageTitle>Kontrahenci</PageTitle>
 <h1>Kontrahenci</h1>
 
-<a href="kontrahenci/nowy" class="btn btn-primary mb-3">Dodaj kontrahenta</a>
+@if (CurrentCompany.Id is null)
+{
+    <p>Najpierw <a href="firmy/nowy">dodaj firmę</a>.</p>
+}
+else
+{
+    <a href="kontrahenci/nowy" class="btn btn-primary mb-3">Dodaj kontrahenta</a>
+}
 
 @if (contractors is null)
 {
@@ -52,6 +60,7 @@ else
     protected override async Task OnInitializedAsync()
     {
         await using var db = await DbFactory.CreateDbContextAsync();
+        db.CurrentCompanyId = CurrentCompany.Id;
         contractors = await db.Contractors
             .AsNoTracking()
             .OrderBy(c => c.Name)

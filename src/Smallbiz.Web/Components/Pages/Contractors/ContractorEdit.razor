@@ -7,6 +7,7 @@
 @attribute [Authorize]
 @inject IDbContextFactory<ApplicationDbContext> DbFactory
 @inject NavigationManager Navigation
+@inject CurrentCompany CurrentCompany
 
 <PageTitle>@(Id is null ? "Nowy kontrahent" : "Edycja kontrahenta")</PageTitle>
 <h1>@(Id is null ? "Nowy kontrahent" : "Edycja kontrahenta")</h1>
@@ -107,6 +108,11 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+        if (CurrentCompany.Id is null)
+        {
+            Navigation.NavigateTo("firmy/nowy");
+            return;
+        }
         if (Id is null)
         {
             contractor = new Contractor();
@@ -114,6 +120,7 @@ else
         else
         {
             await using var db = await DbFactory.CreateDbContextAsync();
+            db.CurrentCompanyId = CurrentCompany.Id;
             contractor = await db.Contractors.FindAsync(Id.Value);
             if (contractor is null)
                 Navigation.NavigateTo("kontrahenci");
@@ -124,6 +131,7 @@ else
     {
         errorMessage = null;
         await using var db = await DbFactory.CreateDbContextAsync();
+        db.CurrentCompanyId = CurrentCompany.Id;
         if (string.IsNullOrWhiteSpace(contractor!.TaxId)) contractor.TaxId = null;
         if (Id is null)
             db.Contractors.Add(contractor!);

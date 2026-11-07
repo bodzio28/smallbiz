@@ -9,6 +9,8 @@ namespace Smallbiz.Domain.Entities;
 public class Contractor
 {
     public int Id { get; set; }
+    public int CompanyId { get; set; }
+    public Company Company { get; set; } = null!;
 
     [Required(ErrorMessage = "Podaj kod kontrahenta."), MaxLength(40, ErrorMessage = "Kod może mieć najwyżej 40 znaków.")]
     public string Code { get; set; } = "";
